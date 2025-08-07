@@ -40,7 +40,7 @@ def get_filtered_fantasy_rankings(csv_file_path, drafted_names, mode='standard')
                 if norm_name not in drafted_names:
                     filtered_list.append(f"{rank}. {name} ({team}, {pos})")
 
-            elif mode == 'BC':
+            elif mode == 'bc':
                 name = row["Player.Name"].strip()
                 tier = row["Tier"].strip()
                 pos = row["Position"].strip()
