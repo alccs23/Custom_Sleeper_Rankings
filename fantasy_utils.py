@@ -22,21 +22,32 @@ def get_draft_pick_names(draft_id):
     data = response.json()
     return set(normalize_name(f"{p['metadata']['first_name']} {p['metadata']['last_name']}") for p in data if 'metadata' in p)
 
-def get_filtered_fantasy_rankings(csv_file_path, drafted_names):
+def get_filtered_fantasy_rankings(csv_file_path, drafted_names, mode='standard'):
     '''
-    Reads a fantasy football CSV ranking file and returns an ordered list of players
-    excluding any whose normalized names appear in the drafted_names set.
+    Reads a fantasy football CSV ranking file in either 'standard' or 'BC' mode,
+    and returns a list of undrafted players formatted for display.
     '''
     filtered_list = []
     with open(csv_file_path, newline='') as f:
         reader = csv.DictReader(f)
         for row in reader:
-            name = row["PLAYER NAME"].strip()
-            team = row["TEAM"].strip()
-            pos = row["POS"].strip()
-            rank = row["RK"].strip()
-            norm_name = normalize_name(name)
-            if norm_name not in drafted_names:
-                filtered_list.append(f"{rank}. {name} ({team}, {pos})")
+            if mode == 'standard':
+                name = row["PLAYER NAME"].strip()
+                team = row["TEAM"].strip()
+                pos = row["POS"].strip()
+                rank = row["RK"].strip()
+                norm_name = normalize_name(name)
+                if norm_name not in drafted_names:
+                    filtered_list.append(f"{rank}. {name} ({team}, {pos})")
+
+            elif mode == 'BC':
+                name = row["Player.Name"].strip()
+                tier = row["Tier"].strip()
+                pos = row["Position"].strip()
+                rank = row["Rank"].strip()
+                norm_name = normalize_name(name)
+                if norm_name not in drafted_names:
+                    filtered_list.append(f"Tier {tier} — {rank}. {name} ({pos})")
+
     return filtered_list
 
